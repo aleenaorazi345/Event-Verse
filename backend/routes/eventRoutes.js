@@ -4,20 +4,30 @@ import {
   getMyEvents, 
   deleteEvent, 
   getAllEvents, 
-  getEventAttendees 
+  getEventAttendees,
+  registerForEvent,
+  getMyRegistrations,
+  getEventDetails
 } from "../controllers/eventController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { authorize } from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
-// PUBLIC ROUTE: Anyone can see all events
+// 1. PUBLIC ROUTES
 router.get("/", getAllEvents);
 
-// PROTECTED ROUTES: Only organizers/admin
-router.post("/", protect, authorize("organizer", "admin"), createEvent);
+// 2. SPECIFIC PROTECTED ROUTES (Must be above /:id)
+router.get("/my-registrations", protect, getMyRegistrations);
 router.get("/my-events", protect, authorize("organizer", "admin"), getMyEvents);
 router.get("/:id/attendees", protect, authorize("organizer", "admin"), getEventAttendees);
+
+// 3. ACTIONS ON SPECIFIC EVENT
+router.post("/:id/register", protect, registerForEvent);
+router.post("/", protect, authorize("organizer", "admin"), createEvent);
 router.delete("/:id", protect, authorize("organizer", "admin"), deleteEvent);
+
+// 4. DYNAMIC ROUTE (Must be at the very bottom)
+router.get("/:id", getEventDetails);
 
 export default router;

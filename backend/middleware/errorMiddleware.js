@@ -4,6 +4,11 @@ export const notFound = (req, res, next) => {
 };
 
 export const errorHandler = (err, req, res, next) => {
+  // 🚨 THIS WILL PRINT THE ERROR IN YOUR VS CODE TERMINAL
+  console.log("\n🚨 BACKEND ERROR 🚨");
+  console.log(err);
+  console.log("-------------------\n");
+
   const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   res.status(statusCode).json({
     message: err.message,

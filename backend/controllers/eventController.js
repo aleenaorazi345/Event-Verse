@@ -1,5 +1,5 @@
 import Event from "../models/Event.js";
-
+import Registration from "../models/Registration.js";
 // @desc Create a new event
 export const createEvent = async (req, res, next) => {
   try {
@@ -24,13 +24,13 @@ export const createEvent = async (req, res, next) => {
 // @desc Get events created by the logged-in organizer
 export const getMyEvents = async (req, res, next) => {
   try {
-    const events = await Event.find({ organizer: req.user._id }).sort("-createdAt");
+    // Changed sort to "date" instead of "-createdAt"
+    const events = await Event.find({ organizer: req.user._id }).sort("date");
     res.json(events);
   } catch (error) {
     next(error);
   }
 };
-
 // @desc Get ALL events (for students)
 export const getAllEvents = async (req, res, next) => {
   try {
@@ -73,6 +73,61 @@ export const deleteEvent = async (req, res, next) => {
 
     await event.deleteOne();
     res.json({ message: "Event removed" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+// @desc Register logged-in student for an event
+export const registerForEvent = async (req, res, next) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+
+    // Check if already registered
+    const existingReg = await Registration.findOne({
+      student: req.user._id,
+      event: event._id,
+    });
+    if (existingReg) {
+      return res.status(400).json({ message: "You are already registered for this event" });
+    }
+
+    // Create registration
+    const registration = await Registration.create({
+      student: req.user._id,
+      event: event._id,
+    });
+
+    res.status(201).json({ message: "Successfully registered!", registration });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getMyRegistrations = async (req, res, next) => {
+  try {
+    // Changed sort to "-createdAt" on the Registration model (which definitely has it)
+    const registrations = await Registration.find({ student: req.user._id })
+      .populate({
+        path: "event",
+        populate: { path: "organizer", select: "name email" },
+      })
+      .sort("-createdAt");
+      
+    res.json(registrations);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc Get a single event by ID
+export const getEventDetails = async (req, res, next) => {
+  try {
+    const event = await Event.findById(req.params.id).populate("organizer", "name email");
+    if (!event) return res.status(404).json({ message: "Event not found" });
+    res.json(event);
   } catch (error) {
     next(error);
   }
