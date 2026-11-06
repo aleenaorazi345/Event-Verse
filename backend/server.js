@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
-
+import eventRoutes from "./routes/eventRoutes.js";
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
@@ -23,6 +23,7 @@ if (process.env.NODE_ENV === "development") app.use(morgan("dev"));
 
 app.get("/api/health", (req, res) => res.json({ status: "ok", message: "EventVerse API alive 🚀" }));
 app.use("/api/auth", authRoutes);
+app.use("/api/events", eventRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

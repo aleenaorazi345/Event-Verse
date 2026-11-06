@@ -27,7 +27,12 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (data) => {
-    const u = await authService.registerUser(data);
+    // Now returns { message, email } instead of user
+    return await authService.registerUser(data); 
+  };
+
+  const verify = async (email, otp) => {
+    const u = await authService.verifyOtp({ email, otp });
     setUser(u);
     return u;
   };
@@ -38,7 +43,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, register, verify, logout }}>
       {children}
     </AuthContext.Provider>
   );
