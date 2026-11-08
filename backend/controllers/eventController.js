@@ -40,8 +40,6 @@ export const getAllEvents = async (req, res, next) => {
     next(error);
   }
 };
-
-// @desc Get all registrations for a specific event
 export const getEventAttendees = async (req, res, next) => {
   try {
     const event = await Event.findById(req.params.id);
@@ -52,8 +50,12 @@ export const getEventAttendees = async (req, res, next) => {
       return res.status(401).json({ message: "Not authorized to view attendees" });
     }
 
-    // For now, return empty until we build the Registration model
-    res.json([]); 
+    // Fetch registrations and populate the student details
+    const attendees = await Registration.find({ event: event._id })
+      .populate("student", "name email")
+      .sort("-createdAt");
+
+    res.json(attendees);
   } catch (error) {
     next(error);
   }
