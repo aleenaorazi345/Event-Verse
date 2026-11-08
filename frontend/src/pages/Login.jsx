@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
-
+import { ArrowLeft } from "lucide-react"; 
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -28,6 +28,12 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-ink-800 px-4">
+      <button 
+  onClick={() => navigate("/")} 
+  className="absolute top-6 left-6 flex items-center gap-2 text-ink-300 hover:text-neon-500 transition font-medium"
+>
+  <ArrowLeft size={18} /> Back to Home
+</button>
       <div className="w-full max-w-md card">
         <h1 className="text-3xl font-bold text-pink-400 mb-1">Welcome back</h1>
         <p className="text-ink-300 text-sm mb-6">Sign in to EventVerse</p>
@@ -53,6 +59,7 @@ const Login = () => {
         </p>
       </div>
     </div>
+    
   );
 };
 

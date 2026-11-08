@@ -34,3 +34,12 @@ export const getMyRegistrations = async () => {
   const res = await api.get("/events/my-registrations");
   return res.data;
 };
+export const getNotifications = async () => {
+  const res = await api.get("/notifications");
+  return res.data;
+};
+
+export const markNotificationsRead = async () => {
+  const res = await api.put("/notifications/read");
+  return res.data;
+};

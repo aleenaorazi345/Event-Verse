@@ -1,5 +1,6 @@
 import Event from "../models/Event.js";
 import Registration from "../models/Registration.js";
+import Notification from "../models/Notification.js"; // Import at the top
 // @desc Create a new event
 export const createEvent = async (req, res, next) => {
   try {
@@ -101,7 +102,13 @@ export const registerForEvent = async (req, res, next) => {
       student: req.user._id,
       event: event._id,
     });
+     // Create Notification
+    await Notification.create({
+      user: req.user._id,
+      message: `You successfully registered for ${event.title}. Check your email for the ticket!`,
+    });
 
+    res.status(201).json({ message: "Successfully registered! Check your email for the ticket.", registration });
     res.status(201).json({ message: "Successfully registered!", registration });
   } catch (error) {
     next(error);

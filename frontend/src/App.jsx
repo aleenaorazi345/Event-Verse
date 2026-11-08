@@ -2,7 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import ProtectedRoute from "./routes/ProtectedRoute.jsx";
 
-// Auth Pages
+// Public Pages
+import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import VerifyOtp from "./pages/VerifyOtp.jsx";
@@ -11,6 +12,7 @@ import VerifyOtp from "./pages/VerifyOtp.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import EventDetails from "./pages/EventDetails.jsx";
 import MyRegistrations from "./pages/MyRegistrations.jsx";
+import Notifications from "./pages/Notifications.jsx";
 
 // Organizer Pages
 import OrganizerDashboard from "./pages/organizer/Dashboard.jsx";
@@ -29,31 +31,32 @@ function App() {
       <AuthProvider>
         <Routes>
           {/* PUBLIC ROUTES */}
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/verify-otp" element={<VerifyOtp />} />
 
-          {/* STUDENT ROUTES (Protected - any logged in user) */}
+          {/* STUDENT ROUTES (Any logged in user) */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/event/:id" element={<EventDetails />} />
             <Route path="/my-registrations" element={<MyRegistrations />} />
+            <Route path="/notifications" element={<Notifications />} />
           </Route>
 
-          {/* ORGANIZER ROUTES (Protected - organizer and admin only) */}
+          {/* ORGANIZER ROUTES (Organizer and Admin only) */}
           <Route element={<ProtectedRoute allowedRoles={["organizer", "admin"]} />}>
             <Route path="/organizer" element={<OrganizerDashboard />} />
             <Route path="/organizer/create" element={<CreateEvent />} />
             <Route path="/organizer/event/:id" element={<EventRegistrations />} />
           </Route>
 
-          {/* ADMIN ROUTES (Protected - admin only) */}
+          {/* ADMIN ROUTES (Admin only) */}
           <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
             <Route path="/admin" element={<AdminDashboard />} />
           </Route>
 
-          {/* FALLBACKS */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          {/* FALLBACK */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>

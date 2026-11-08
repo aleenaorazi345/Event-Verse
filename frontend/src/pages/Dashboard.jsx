@@ -51,7 +51,14 @@ const Dashboard = () => {
           >
             <Ticket size={16} /> My Tickets
           </button>
-
+          <button 
+  onClick={() => navigate("/notifications")} 
+  className="relative text-ink-200 hover:text-neon-500 transition"
+  title="Notifications"
+>
+  <Bell size={20} />
+  {/* Red dot for unread could go here */}
+</button>
           <span className="text-sm text-ink-200 border-l border-ink-500 pl-6">
             Hi, <span className="text-pink-400 font-semibold">{user?.name}</span>
           </span>
