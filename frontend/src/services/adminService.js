@@ -19,3 +19,7 @@ export const deleteEventAdmin = async (id) => {
   const res = await api.delete(`/admin/events/${id}`);
   return res.data;
 };
+export const getAllAttendeesAdmin = async () => {
+  const res = await api.get("/admin/attendees");
+  return res.data;
+};

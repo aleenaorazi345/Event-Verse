@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
-import { Calendar, LogOut, MapPin, Search, Ticket } from "lucide-react";
+import { Calendar, LogOut, MapPin, Search, Ticket, Bell, Shield } from "lucide-react"; // <-- Added Shield here
 import { getAllEvents } from "../services/eventService.js";
 
 const Dashboard = () => {
@@ -44,6 +44,17 @@ const Dashboard = () => {
         <h1 className="text-2xl font-bold neon-text">EventVerse</h1>
         
         <div className="flex items-center gap-6">
+          
+          {/* ADMIN BUTTON - Only shows if user is admin */}
+          {user?.role === "admin" && (
+            <button 
+              onClick={() => navigate("/admin")} 
+              className="flex items-center gap-2 text-sm text-pink-400 hover:text-pink-300 transition font-semibold border-r border-ink-500 pr-6"
+            >
+              <Shield size={16} /> Admin Panel
+            </button>
+          )}
+
           {/* MY TICKETS BUTTON */}
           <button 
             onClick={() => navigate("/my-registrations")} 
@@ -51,14 +62,16 @@ const Dashboard = () => {
           >
             <Ticket size={16} /> My Tickets
           </button>
+          
+          {/* NOTIFICATIONS BELL */}
           <button 
-  onClick={() => navigate("/notifications")} 
-  className="relative text-ink-200 hover:text-neon-500 transition"
-  title="Notifications"
->
-  <Bell size={20} />
-  {/* Red dot for unread could go here */}
-</button>
+            onClick={() => navigate("/notifications")} 
+            className="relative text-ink-200 hover:text-neon-500 transition"
+            title="Notifications"
+          >
+            <Bell size={20} />
+          </button>
+          
           <span className="text-sm text-ink-200 border-l border-ink-500 pl-6">
             Hi, <span className="text-pink-400 font-semibold">{user?.name}</span>
           </span>

@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
-import { LogOut, Users, Calendar, Trash2, ShieldAlert } from "lucide-react";
+import { LogOut, Users, Calendar, Trash2, ShieldAlert, Ticket, ArrowLeft } from "lucide-react";
 import * as adminService from "../../services/adminService.js";
 
 const AdminDashboard = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   
-  const [activeTab, setActiveTab] = useState("users"); // "users" or "events"
+  const [activeTab, setActiveTab] = useState("users"); // "users", "events", "attendees"
   const [users, setUsers] = useState([]);
   const [events, setEvents] = useState([]);
+  const [attendees, setAttendees] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,9 +24,12 @@ const AdminDashboard = () => {
       if (activeTab === "users") {
         const data = await adminService.getAllUsers();
         setUsers(data);
-      } else {
+      } else if (activeTab === "events") {
         const data = await adminService.getAllEventsAdmin();
         setEvents(data);
+      } else {
+        const data = await adminService.getAllAttendeesAdmin();
+        setAttendees(data);
       }
     } catch (err) {
       console.error("Failed to load data", err);
@@ -63,28 +67,29 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-ink-800 text-white">
-    <nav className="bg-ink-700 border-b border-ink-500 px-6 py-4 flex items-center justify-between">
-  <h1 className="text-2xl font-bold neon-text">EventVerse Admin</h1>
-  
-  <div className="flex items-center gap-6">
-    {/* Shortcuts for Admin */}
-    <button onClick={() => navigate("/dashboard")} className="text-sm text-ink-200 hover:text-neon-500 transition">
-      View Student UI
-    </button>
-    <button onClick={() => navigate("/organizer")} className="text-sm text-ink-200 hover:text-neon-500 transition">
-      View Organizer UI
-    </button>
-    
-    <div className="h-6 w-px bg-ink-500"></div> {/* Divider */}
+      {/* NAVBAR WITH SHORTCUTS */}
+      <nav className="bg-ink-700 border-b border-ink-500 px-6 py-4 flex items-center justify-between">
+        <h1 className="text-2xl font-bold neon-text">EventVerse Admin</h1>
+        
+        <div className="flex items-center gap-6">
+          <button onClick={() => navigate("/dashboard")} className="text-sm text-ink-200 hover:text-neon-500 transition">
+            View Student UI
+          </button>
+          <button onClick={() => navigate("/organizer")} className="text-sm text-ink-200 hover:text-neon-500 transition">
+            View Organizer UI
+          </button>
+          
+          <div className="h-6 w-px bg-ink-500"></div>
 
-    <span className="text-xs bg-pink-500/20 text-pink-400 px-3 py-1 rounded-full font-semibold uppercase flex items-center gap-1">
-      <ShieldAlert size={12} /> Admin
-    </span>
-    <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-ink-200 hover:text-red-400 transition">
-      <LogOut size={16} /> Logout
-    </button>
-  </div>
-</nav>
+          <span className="text-xs bg-pink-500/20 text-pink-400 px-3 py-1 rounded-full font-semibold uppercase flex items-center gap-1">
+            <ShieldAlert size={12} /> Admin
+          </span>
+          <span className="text-sm text-ink-200"><span className="text-pink-400 font-semibold">{user?.name}</span></span>
+          <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-ink-200 hover:text-red-400 transition">
+            <LogOut size={16} /> Logout
+          </button>
+        </div>
+      </nav>
 
       <main className="max-w-6xl mx-auto px-6 py-10">
         <div className="mb-8">
@@ -92,19 +97,25 @@ const AdminDashboard = () => {
           <h2 className="text-3xl font-bold mt-1">Platform Management 🛡️</h2>
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-4 mb-6 border-b border-ink-600 pb-4">
+        {/* TABS */}
+        <div className="flex gap-4 mb-6 border-b border-ink-600 pb-4 overflow-x-auto">
           <button 
             onClick={() => setActiveTab("users")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${activeTab === "users" ? "bg-pink-500/20 text-pink-400" : "text-ink-300 hover:text-white"}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium whitespace-nowrap transition ${activeTab === "users" ? "bg-pink-500/20 text-pink-400" : "text-ink-300 hover:text-white"}`}
           >
             <Users size={18} /> Manage Users
           </button>
           <button 
             onClick={() => setActiveTab("events")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition ${activeTab === "events" ? "bg-pink-500/20 text-pink-400" : "text-ink-300 hover:text-white"}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium whitespace-nowrap transition ${activeTab === "events" ? "bg-pink-500/20 text-pink-400" : "text-ink-300 hover:text-white"}`}
           >
             <Calendar size={18} /> Manage Events
+          </button>
+          <button 
+            onClick={() => setActiveTab("attendees")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium whitespace-nowrap transition ${activeTab === "attendees" ? "bg-pink-500/20 text-pink-400" : "text-ink-300 hover:text-white"}`}
+          >
+            <Ticket size={18} /> All Attendees
           </button>
         </div>
 
@@ -112,8 +123,8 @@ const AdminDashboard = () => {
           <p className="text-ink-300">Loading...</p>
         ) : activeTab === "users" ? (
           /* USERS TABLE */
-          <div className="card overflow-hidden p-0">
-            <table className="w-full text-left">
+          <div className="card overflow-x-auto p-0">
+            <table className="w-full text-left min-w-[600px]">
               <thead className="bg-ink-600 text-ink-200 text-sm border-b border-ink-500">
                 <tr>
                   <th className="p-4 font-medium">Name</th>
@@ -145,10 +156,10 @@ const AdminDashboard = () => {
               </tbody>
             </table>
           </div>
-        ) : (
+        ) : activeTab === "events" ? (
           /* EVENTS TABLE */
-          <div className="card overflow-hidden p-0">
-            <table className="w-full text-left">
+          <div className="card overflow-x-auto p-0">
+            <table className="w-full text-left min-w-[600px]">
               <thead className="bg-ink-600 text-ink-200 text-sm border-b border-ink-500">
                 <tr>
                   <th className="p-4 font-medium">Event Title</th>
@@ -172,6 +183,30 @@ const AdminDashboard = () => {
                         <Trash2 size={18} className="ml-auto" />
                       </button>
                     </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          /* ATTENDEES TABLE */
+          <div className="card overflow-x-auto p-0">
+            <table className="w-full text-left min-w-[600px]">
+              <thead className="bg-ink-600 text-ink-200 text-sm border-b border-ink-500">
+                <tr>
+                  <th className="p-4 font-medium">Student Name</th>
+                  <th className="p-4 font-medium">Student Email</th>
+                  <th className="p-4 font-medium">Registered Event</th>
+                  <th className="p-4 font-medium">Date Registered</th>
+                </tr>
+              </thead>
+              <tbody>
+                {attendees.map((a) => (
+                  <tr key={a._id} className="border-b border-ink-600 last:border-0 hover:bg-ink-600/50 transition">
+                    <td className="p-4 font-medium">{a.student?.name || "Deleted User"}</td>
+                    <td className="p-4 text-ink-300">{a.student?.email || "N/A"}</td>
+                    <td className="p-4 text-pink-400 font-medium">{a.event?.title || "Deleted Event"}</td>
+                    <td className="p-4 text-ink-300">{new Date(a.createdAt).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>

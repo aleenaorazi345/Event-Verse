@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "@exortek/express-mongo-sanitize": "^4.0.0",
+    "dompurify": "^3.4.17",
+    "helmet": "^8.3.0",
     "nodemailer": "^10.3.1"
   }
 }

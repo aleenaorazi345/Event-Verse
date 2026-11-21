@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 import Event from "../models/Event.js";
-
+import Registration from "../models/Registration.js"; // <-- Add this import at the top
 // @desc Get all users
 export const getAllUsers = async (req, res, next) => {
   try {
@@ -47,6 +47,20 @@ export const deleteEventAdmin = async (req, res, next) => {
 
     await event.deleteOne();
     res.json({ message: "Event removed by admin" });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+// @desc Get all registrations across the platform
+export const getAllAttendeesAdmin = async (req, res, next) => {
+  try {
+    const registrations = await Registration.find()
+      .populate("student", "name email")
+      .populate("event", "title date")
+      .sort("-createdAt");
+    res.json(registrations);
   } catch (error) {
     next(error);
   }

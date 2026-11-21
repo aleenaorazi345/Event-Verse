@@ -11,7 +11,7 @@ import {
 } from "../controllers/eventController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { authorize } from "../middleware/roleMiddleware.js";
-
+import { validateEvent, handleValidation } from "../validators/eventValidator.js";
 const router = express.Router();
 
 // 1. PUBLIC ROUTES
@@ -24,7 +24,7 @@ router.get("/:id/attendees", protect, authorize("organizer", "admin"), getEventA
 
 // 3. ACTIONS ON SPECIFIC EVENT
 router.post("/:id/register", protect, registerForEvent);
-router.post("/", protect, authorize("organizer", "admin"), createEvent);
+router.post("/", protect, authorize("organizer", "admin"), validateEvent, handleValidation, createEvent);
 router.delete("/:id", protect, authorize("organizer", "admin"), deleteEvent);
 
 // 4. DYNAMIC ROUTE (Must be at the very bottom)

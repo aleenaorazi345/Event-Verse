@@ -3,7 +3,8 @@ import {
   getAllUsers, 
   deleteUser, 
   getAllEventsAdmin, 
-  deleteEventAdmin 
+  deleteEventAdmin,
+  getAllAttendeesAdmin
 } from "../controllers/adminController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { authorize } from "../middleware/roleMiddleware.js";

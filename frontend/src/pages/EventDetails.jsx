@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getEventDetails, registerForEvent } from "../services/eventService.js";
 import { Calendar, MapPin, Users, ArrowLeft } from "lucide-react";
-
+import { sanitizeOutput } from "../utils/sanitize.js";
 const EventDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -70,7 +70,10 @@ const EventDetails = () => {
 
           <div className="mb-8">
             <h3 className="text-xl font-bold mb-2">About this event</h3>
-            <p className="text-ink-300 leading-relaxed whitespace-pre-wrap">{event.description}</p>
+            <p 
+  className="text-ink-300 leading-relaxed whitespace-pre-wrap"
+  dangerouslySetInnerHTML={{ __html: sanitizeOutput(event.description) }}
+/>
           </div>
 
           <div className="border-t border-ink-500 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
