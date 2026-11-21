@@ -1,19 +1,39 @@
 import { Link } from "react-router-dom";
 import { Calendar, Ticket, Users, ArrowRight, Sparkles } from "lucide-react";
+import { useAuth } from "../hooks/useAuth"; // 👈 Import Auth to check if logged in
+import NotificationBell from "../components/layout/NotificationBell"; // 👈 Import Bell
 
 const Home = () => {
+  const { user } = useAuth(); // 👈 Get user state
+
   return (
     <div className="min-h-screen bg-ink-800 text-white font-sans flex flex-col">
-      {/* NAVBAR */}
+      {/* NAVBAR (Black Wala) */}
       <nav className="bg-ink-800/80 backdrop-blur-md border-b border-ink-700 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
         <h1 className="text-2xl font-bold neon-text">EventVerse</h1>
+        
         <div className="flex items-center gap-4">
-          <Link to="/login" className="text-sm font-medium text-ink-200 hover:text-white transition">
-            Sign In
-          </Link>
-          <Link to="/register" className="btn-primary text-sm py-2 px-5">
-            Get Started
-          </Link>
+          {/* 🔔 CONDITIONAL RENDERING: Agar user login hai toh Bell aur Dashboard dikhao, warna Login/Register */}
+          {user ? (
+            <>
+              <Link to="/dashboard" className="text-sm font-medium text-ink-200 hover:text-white transition">
+                Dashboard
+              </Link>
+              <NotificationBell /> {/* 👈 BELL YAHAN LAGA HAI */}
+              <Link to="/logout" className="text-sm font-medium text-red-400 hover:text-red-300">
+                Logout
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="text-sm font-medium text-ink-200 hover:text-white transition">
+                Sign In
+              </Link>
+              <Link to="/register" className="btn-primary text-sm py-2 px-5">
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 
